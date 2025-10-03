@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #333;
+        }
+        .header p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .section h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+        td {
+            background-color: #fff;
+        }
+        .totals {
+            margin-top: 20px;
+        }
+        .totals table {
+            width: 100%;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .totals td {
+            text-align: right;
+            padding: 10px;
+        }
+        .footer p {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 0;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .signature-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .signature-box div {
+            text-align: center;
+            width: 45%;
+        }
+        .signature-box h4 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            color: #444;
+        }
+        .signature-box .signature-line {
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+            margin: 10px 0;
+        }
+        .signature-box .seal {
+            font-size: 14px;
+            color: #666;
+        }
+        @media print {
+            .print-hide { display: none; }
+            .invoice-container {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                box-shadow: none;
+            }
+            .header, .footer {
+                margin-bottom: 10px;
+            }
+            .section {
+                margin-bottom: 10px;
+            }
+            .totals {
+                margin-top: 10px;
+            }
+            .signature-box {
+                margin-top: 10px;
+            }
+            .btn {
+                display: none;
+            }
+            .invoice-container {
+                font-size: 12px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .section h3 {
+                font-size: 18px;
+            }
+            table {
+                font-size: 12px;
+            }
+            .totals table {
+                font-size: 12px;
+            }
+            .signature-box h4 {
+                font-size: 14px;
+            }
+            .signature-box .seal {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <h1>Tax Invoice</h1>
+            <p>{{ user_profile.business_title }}</p>
+            <p>{{ user_profile.business_address }}</p>
+            <p>Phone: {{ user_profile.business_phone }} | Email: {{ user_profile.business_email }}</p>
+        </div>
+
+        <div class="section">
+            <h3>Bill To</h3>
+            <p>{{ invoice_data.customer_name }}</p>
+            <p>{{ invoice_data.customer_address }}</p>
+            <p>Contact No.: {{ invoice_data.customer_phone }}</p>
+            <p>Invoice No.: {{ invoice.invoice_number }}</p>
+            <p>Date: {{ invoice.invoice_date }}</p>
+        </div>
+
+        <div class="section">
+            <h3>Items</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>IMEI</th>
+                        <th>Quantity</th>
+                        <th>Price/Unit</th>
+                        <th>Taxable Amount</th>
+                        <th>IGST Amount</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in invoice_data.items %}
+                    <tr>
+                        <td>{{ item.invoice_product }} ({{ item.invoice_hsn }})</td>
+                        <td>{{ item.invoice_imei }}</td> 
+                        <td>{{ item.invoice_qty|default:"0" }}</td>
+                        <td>₹{{ item.invoice_rate_without_gst|default:"0"|floatformat:2 }}</td>
+                        <td>₹{{ item.invoice_amt_without_gst|default:"0"|floatformat:2 }}</td>
+                        {% if invoice_data.igstcheck %}
+                            <td>₹{{ item.invoice_amt_igst|default:"0"|floatformat:2 }}</td>
+                        {% else %}
+                            <td>₹{{ item.invoice_amt_cgst|default:"0"|floatformat:2 }} + ₹{{ item.invoice_amt_sgst|default:"0"|floatformat:2 }}</td>
+                        {% endif %}
+                        <td>₹{{ item.invoice_amt_with_gst|default:"0"|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section totals">
+            <h3>Totals and Bank Details</h3>
+            <table>
+                <tr>
+                    <td>Mode of Payment:</td>
+                    <td>Offline</td>
+                    <td>Sub Total</td>
+                    <td>₹{{ invoice_data.invoice_total_amt_without_gst|default:"0"|floatformat:2 }}</td>
+                </tr>
+                {% if invoice_data.igstcheck %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>IGST</td>
+                        <td>₹{{ invoice_data.invoice_total_amt_igst|default:"0"|floatformat:2 }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>CGST</td>
+                        <td>₹{{ invoice_data.invoice_total_amt_cgst|default:"0"|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>SGST</td>
+                        <td>₹{{ invoice_data.invoice_total_amt_sgst|default:"0"|floatformat:2 }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Total</td>
+                    <td>₹{{ invoice_data.invoice_total_amt_with_gst|default:"0"|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Received</td>
+                    <td>₹{{ invoice_data.invoice_total_amt_received|default:"0"|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>Balance</td>
+                    <td>₹{{ invoice_data.invoice_total_amt_balance|default:"0"|floatformat:2 }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Undersigned Box for Signature and Shop Seal -->
+        <div class="signature-box">
+            <div>
+                <h4>For {{ user_profile.business_title }}</h4>
+                <div class="signature-line"></div>
+                <p>Authorized Signature</p>
+            </div>
+            <div>
+                <h4>Shop Seal</h4>
+                <div class="signature-line"></div>
+                <p class="seal">[Place Shop Seal Here]</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Invoice Amount In Words: {{ total_in_words }}</p>
+			<p>Terms and Conditions: Please return this bill for any replacement purposes.
+				<br>Payment should be made within 7 days from the date of invoice.
+				<br>Any defects of the item is to be handled from authorized service,after 10 days from the date of invoice.</br>
+    </div>
+
+    <button onclick="window.print();" class="btn">Print Invoice</button>
+</body>
+</html>
