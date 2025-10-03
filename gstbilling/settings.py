@@ -123,7 +123,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # This is where collectstatic will put files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'gstbillingapp/static') # Add paths to your app's static files
+    # Add other directories if you have static files outside of app directories
+]
 
 LOGIN_URL = "/login"
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/invoices/new"
