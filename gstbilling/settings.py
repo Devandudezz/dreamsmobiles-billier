@@ -138,6 +138,10 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+CSRF_TRUSTED_ORIGINS = [
+    'https://dreamsmobiles-billier.onrender.com'
+]
+
 
 
 SOCIAL_AUTH_PIPELINE = (
