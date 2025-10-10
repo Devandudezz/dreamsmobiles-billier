@@ -11,6 +11,7 @@ from django.db.models import Max
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from .models import Customer
@@ -459,3 +460,8 @@ def book_logs_add(request, book_id):
 def landing_page(request):
     context = {}
     return render(request, 'gstbillingapp/pages/landing_page.html', context)
+
+def logout(request):
+    auth_logout(request)
+    return render(request, 'gstbillingapp/logout.html')
+    
