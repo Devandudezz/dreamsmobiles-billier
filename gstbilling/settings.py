@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+STATIC_ROOT = "gstbillingapp/static"
+gstbillingapp/static
+
 
 # Application definition
 
