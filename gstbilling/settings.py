@@ -32,6 +32,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://dreamsmobiles-billier.onrender.com"
+    ]
+
 
 # Application definition
 
